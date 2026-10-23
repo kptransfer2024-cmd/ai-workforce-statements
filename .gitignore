@@ -1,0 +1,18 @@
+# Research data
+/data/
+/raw/
+/clean/
+/panel/
+/output/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Credentials
+.env
+*.key
+
+# Large research data
+*.parquet
