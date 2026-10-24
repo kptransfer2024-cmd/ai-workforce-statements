@@ -67,36 +67,3 @@ The two rightmost columns are deliberately empty review slots. For **every field
 | ai_stage | Stated implementation stage. | pilot / deployed / scaled / planned. | Require source evidence of a pilot, use in operation, scaled rollout, or future plan. No numeric adoption threshold is supplied for scaled; do not invent one. Leave unclear stages pending. | Pending | Pending |
 | ai_horizon_months | Explicit time horizon for the AI activity/plan. | Nonnegative number of months; blank if unstated or unresolved. | Preserve the quoted horizon; convert only an explicit duration with a documented basis. Do not convert vague future intentions to a numeric horizon. | Pending | Pending |
 | ai_workforce_claim | Explicit AI-related workforce claim. | reduces / augments / no_claim. | Use reduces for an explicit AI-linked workforce reduction, augments for explicit worker augmentation, and no_claim when no workforce claim is made in sufficient context. Productivity/time savings alone do not establish headcount reduction. | Pending | Pending |
-
-## Genuine Pilot example A - pending researcher review
-
-- Independent Pilot source and source/call/segment identifiers: [pending]
-- Validation non-overlap check: [pending]
-- Original quote and exact offsets: [pending; no quotation invented]
-- Management identity, role, section, and prompt evidence: [pending]
-- Inclusion/exclusion decision and explanation: [pending]
-- Each field's value, evidence, and coding explanation: [complete Example A column above]
-- Ambiguities and adjudication: [pending]
-
-## Genuine Pilot example B - pending researcher review
-
-- Independent Pilot source and source/call/segment identifiers: [pending]
-- Validation non-overlap check: [pending]
-- Original quote and exact offsets: [pending; no quotation invented]
-- Management identity, role, section, and prompt evidence: [pending]
-- Inclusion/exclusion decision and explanation: [pending]
-- Each field's value, evidence, and coding explanation: [complete Example B column above]
-- Ambiguities and adjudication: [pending]
-
-## Questions for Professor Yong
-
-- What anchors define confidence scores 1, 2, and 3?
-- How should unranked multiple causes, absent secondary causes, and more than two causes be represented?
-- How should inseparable multiple AI statement types or implementation stages be handled?
-- Does ai_role apply to pure AI statements with no workforce action, and how should enables differ from an augmentation claim in borderline cases?
-- How should management speakers outside CEO/CFO/clearly identified executive roles be represented without inventing a new allowed value?
-- How should approximate amounts, ranges, multiple magnitudes, currencies, and calendar/fiscal horizons be stored without false precision?
-- How should overlaps between workforce action labels be resolved when one action can be described in multiple ways?
-- For validation, how should excluded candidates and multiple statements split from one sampled passage affect the evaluation unit and weights?
-
-No unresolved answer is implemented as a coding rule. Review and approve this draft before formal coding.
