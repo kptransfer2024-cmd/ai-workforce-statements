@@ -1,4 +1,4 @@
-# AI Workforce Statements - Human Codebook Draft
+# AI Workforce Statements - Codebook
 
 Status: researcher-review draft; no examples or labels have been assigned. Methodological authority: Professor Yong's definitions supplied in the task. A separate RA Guide was not available in the project documentation. Where the supplied protocol is silent, the question is identified rather than resolved with an invented rule.
 
