@@ -1,0 +1,102 @@
+# AI Workforce Statements - Human Codebook Draft
+
+Status: researcher-review draft; no examples or labels have been assigned. Methodological authority: Professor Yong's definitions supplied in the task. A separate RA Guide was not available in the project documentation. Where the supplied protocol is silent, the question is identified rather than resolved with an invented rule.
+
+## Objective and unit of coding
+
+Build a reproducible protocol for management statements about a firm's own AI activity and workforce changes in S&P 500 earnings calls. The sampling group is a retrieval stratum, not a human statement class. Confirm relevant firm membership/identity through a later approved historical-crosswalk step; it is not established by this codebook.
+
+A sampled passage is a source container. A coder may find no includable statement, one statement, or several distinct statements/actions within it. Split distinct actions into separate records with stable identifiers and their own evidence. Preserve common context where necessary; do not split each keyword or count one action twice merely because it has several descriptors. Preserve the link back to the source candidate. How multiple split statements affect validation weighting is a question for Professor Yong, not an automatic relabeling of the 300 sampled candidates.
+
+## Inclusion and exclusion
+
+- **Workforce:** management statements about reductions, layoffs, freezes, slower hiring, no-backfill, offshoring, restructuring affecting headcount, or workforce growth.
+- **AI:** management statements about the firm's own AI investment, adoption, deployment, productivity effects, operational applications, or specific future plans.
+- **Both:** substantive AI and workforce content in the statement. Both does not itself imply a causal relationship.
+- Exclude generic employee praise, cost savings without workforce implications, vague AI enthusiasm, and AI products sold to customers without internal operational relevance. A qualifying internal product application may use the product type.
+- Analyst speech is context, not the included management statement. Establish management status from evidence; neither a keyword match nor an executive-like name is sufficient.
+- Do not infer layoffs from efficiency, productivity, automation, time saved, or adjacent AI mentions. Code AI-attributed workforce change only when management explicitly attributes it to AI/automation. Apply the same explicit-evidence standard to other causes.
+
+## Coding procedure and uncertainty
+
+1. Verify the source, call, speaker, management status, and sufficient surrounding context.
+2. Decide inclusion before statement_class. Record exclusions and unresolved cases in the human review log; do not add an unauthorized class such as excluded to the allowed values.
+3. Delimit the verbatim statement and separate genuinely distinct actions/claims. Retain negation, scope, timing, and attribution.
+4. Populate only supported fields. Preserve blank values for unknown, not applicable, or unresolved entries and explain which situation applies in the review log. Blank is not numeric zero or a label such as none_stated.
+5. Pure ai statements leave workforce-specific action, cause_primary, and cause_secondary blank. Workforce magnitude/horizon fields are inapplicable when there is no workforce action. Use the AI amount/horizon fields for AI-only claims. AI-specific fields are not forced onto workforce-only statements.
+6. Document competing interpretations with source evidence for adjudication. Do not create a causal ranking, confidence rubric, or type precedence that Professor Yong has not supplied.
+7. Use separate Pilot material to develop examples. Keep the reserved validation CSV unchanged and do not use its quotes or eventual labels for codebook or prompt tuning.
+
+## Provenance retained alongside coding
+
+Keep source_file, source file version/size, source_row, row_group/row_in_group, segment_index, quote character offsets, original speaker metadata, fiscal year, and the parent candidate/sample identifier. These audit links accompany the coding fields; they are not inferred labels. Character offsets are zero-based and end-exclusive. Preserve original source metadata separately when a verified firm ID or role is later added.
+
+## Field dictionary and two example slots per field
+
+The two rightmost columns are deliberately empty review slots. For **every field**, each slot must eventually contain **coded value; evidence from a genuine Pilot quote/source; coding explanation**. Until researcher review, Pending means no value or explanation has been asserted. Populate Example A and Example B only from the independent Pilot material documented in the two full example templates below. Do not fabricate quotes or borrow validation cases.
+
+| Field | Definition | Allowed values | Decision rules | Example A: value / evidence / explanation | Example B: value / evidence / explanation |
+|---|---|---|---|---|---|
+| statement_id | Stable identifier for one human-delimited statement/action record. | Unique string. | Retain source row, segment, and quote offsets in provenance; add a stable split suffix for distinct records from one passage. Do not equate a sampled passage with one verified statement. | Pending | Pending |
+| firm_id | Research firm identifier. | Verified project firm ID; blank if unresolved. | Keep source company_id and ticker in provenance. Populate the research ID only after an approved historical-crosswalk link; no merge or inferred ID here. | Pending | Pending |
+| ticker | Ticker supplied for the source call. | Source ticker string; blank if absent. | Copy the source value without substituting today's ticker or treating it as a permanent firm identifier. | Pending | Pending |
+| call_date | Calendar date of the source earnings call. | ISO YYYY-MM-DD; blank if unavailable. | Use the source call date, not a fiscal-period end; preserve the original timestamp in provenance. | Pending | Pending |
+| fiscal_quarter | Fiscal quarter associated with the call. | 1, 2, 3, 4; blank if unavailable. | Use the source quarter; retain fiscal year alongside it in provenance. Do not derive fiscal quarter from calendar month. | Pending | Pending |
+| statement_class | Substantive content of an included management statement. | workforce / ai / both. | Apply the inclusion rules below. Both requires substantive AI and workforce content, not proximity alone. Leave rejected/unresolved candidates unclassified and record the reason in review notes. | Pending | Pending |
+| speaker | Speaker of the quoted management statement. | Exact source speaker name; blank if unidentified. | Preserve source wording. An analyst question may supply context but is not the management statement being coded. | Pending | Pending |
+| speaker_role | Verified executive role at the time of the call. | CEO / CFO / other executive; blank if unresolved. | Require the call introduction, a direct title, or a documented contemporaneous source. Never infer role from name, speaking order, or response style. Flag management speakers whose titles do not clearly fit these categories. | Pending | Pending |
+| section | Verified call section containing the statement. | prepared / qa; blank if unresolved. | Use explicit call structure or verified transition/context. Question-like wording or speaker identity alone is insufficient. | Pending | Pending |
+| analyst_prompted | Whether an analyst prompt elicited the management statement. | 0 / 1; blank if unresolved. | Use 1 only when contextual evidence links the statement to an analyst prompt; use 0 only with evidence it was not prompted. Do not assign 1 to every qa statement or 0 when context is missing. | Pending | Pending |
+| action | Workforce action described. | reduction / freeze / slowdown / no_backfill / offshoring / restructuring / growth. | Use reduction for stated reductions/layoffs; freeze for a hiring halt; slowdown for slower hiring; no_backfill for nonreplacement; offshoring for moving work abroad; restructuring only when headcount is affected; growth for workforce growth. Pure ai: blank. Split distinct actions; do not force an action not supported by the quote. | Pending | Pending |
+| tense | Timing/status of the described action or AI activity. | realized / planned / ongoing. | Distinguish an already realized event, a future plan, and activity currently underway using source wording. Split distinct events where needed; do not choose a label solely from a date or verb form. | Pending | Pending |
+| cause_primary | Explicitly attributed main cause of a workforce action. | ai_automation / demand / cost / restructuring / overhiring / macro / merger / other / none_stated. | Require management's explicit causal attribution. none_stated means no cause stated in sufficient context, not unknown context. Pure ai: blank. If multiple causes have no explicit primary ordering, flag for adjudication rather than rank them. | Pending | Pending |
+| cause_secondary | Explicitly attributed additional cause of a workforce action. | ai_automation / demand / cost / restructuring / overhiring / macro / merger / other / none_stated. | Do not infer a second cause from nearby topics. Pure ai: blank. How to represent no secondary cause and more than two unranked causes is awaiting Professor confirmation; leave unresolved entries blank with a review note. | Pending | Pending |
+| ai_role | AI's stated relationship to the workforce change. | substitutes / enables / unrelated / not_mentioned. | Use substitutes only for explicit replacement/substitution; enables for explicit support of the change; unrelated only when independence is explicit. not_mentioned applies where AI is not mentioned in the workforce statement/context. Do not derive a role from proximity. Applicability to pure ai with no workforce change remains an open question; leave unresolved cases blank. | Pending | Pending |
+| magnitude_number | Explicit size of the workforce action. | Numeric value; blank if absent, ambiguous, or not applicable. | Capture only a number tied to this action, with unit and scope. Do not treat an unrelated company-wide number as the action's magnitude, convert approximate language to a precise number, or silently choose from a range. Pure ai workforce magnitude: blank. | Pending | Pending |
+| magnitude_unit | Unit of the workforce-action magnitude. | headcount / percent / dollars; blank when magnitude is blank. | Use only the quoted unit. Preserve currency, scale, denominator, and bounds in quote/review notes; never infer a percent denominator or convert currency. | Pending | Pending |
+| functions_named | Functions named in connection with the statement/action. | Source function names as text; blank if none. | Retain named functions without imposing an industry/job taxonomy. Do not infer functions from company business or speaker title. | Pending | Pending |
+| horizon_months | Explicit time horizon for the workforce action. | Nonnegative number of months; blank if unstated or not determinable. | Use an explicit duration; a stated number of years can be converted to months with the conversion documented. Do not invent dates for vague timing such as soon. Preserve calendar/fiscal phrasing for review. Pure ai uses ai_horizon_months. | Pending | Pending |
+| quote | Verbatim evidence supporting this record. | Exact contiguous source text. | Preserve wording and enough context to interpret attribution, scope, timing, and negation. Retain character offsets; do not join noncontiguous text as one verbatim quote or replace it with a paraphrase. | Pending | Pending |
+| confidence | Human coder's confidence in the record. | 1 / 2 / 3. | Professor-supplied scale has no score anchors in the current instructions. Do not invent thresholds: leave pending until the 1-3 rubric is confirmed. Confidence cannot make missing evidence sufficient for inclusion. | Pending | Pending |
+| ai_statement_type | Type of substantive AI statement. | investment / deployment / productivity_claim / product / plan / workforce_link. | Use the stated AI investment, deployment, productivity claim, operationally relevant product, specific plan, or explicit workforce link. A customer-facing product alone is excluded. For inseparable multiple types, flag the unresolved precedence rather than invent one. | Pending | Pending |
+| ai_specificity | Specificity of an included AI statement. | 1 = generic; 2 = named function/use case; 3 = named function plus quantitative detail. | Apply these exact anchors after inclusion. Generic specificity does not admit vague enthusiasm. A number without a named function does not meet level 3; require quantitative detail linked to the function. | Pending | Pending |
+| ai_function | Function/use case named for the firm's own AI activity. | Source function/use-case text; blank if unstated. | Copy the described function. Do not infer internal adoption from products sold to customers. | Pending | Pending |
+| ai_amount | Explicit quantity tied to the AI activity/claim. | Numeric value; blank if absent or unresolved. | Tie the amount to the particular AI claim, period, and scope. Do not convert unsupported ranges, mix spending and savings, or infer a workforce reduction from hours saved. | Pending | Pending |
+| ai_unit | Unit of the AI amount. | dollars / percent / headcount / hours; blank if ai_amount is blank. | Use the stated unit and retain currency, scale, and denominator in evidence. No automatic currency, FTE, or time conversion. | Pending | Pending |
+| ai_build_or_buy | Stated approach to obtaining the AI capability. | build / buy / partner / not_stated. | Use explicit internal development, purchase, or partnership evidence. not_stated is for absence of a stated approach in adequate context. Mixed approaches require review or distinct records; do not infer from vendor names alone. | Pending | Pending |
+| ai_stage | Stated implementation stage. | pilot / deployed / scaled / planned. | Require source evidence of a pilot, use in operation, scaled rollout, or future plan. No numeric adoption threshold is supplied for scaled; do not invent one. Leave unclear stages pending. | Pending | Pending |
+| ai_horizon_months | Explicit time horizon for the AI activity/plan. | Nonnegative number of months; blank if unstated or unresolved. | Preserve the quoted horizon; convert only an explicit duration with a documented basis. Do not convert vague future intentions to a numeric horizon. | Pending | Pending |
+| ai_workforce_claim | Explicit AI-related workforce claim. | reduces / augments / no_claim. | Use reduces for an explicit AI-linked workforce reduction, augments for explicit worker augmentation, and no_claim when no workforce claim is made in sufficient context. Productivity/time savings alone do not establish headcount reduction. | Pending | Pending |
+
+## Genuine Pilot example A - pending researcher review
+
+- Independent Pilot source and source/call/segment identifiers: [pending]
+- Validation non-overlap check: [pending]
+- Original quote and exact offsets: [pending; no quotation invented]
+- Management identity, role, section, and prompt evidence: [pending]
+- Inclusion/exclusion decision and explanation: [pending]
+- Each field's value, evidence, and coding explanation: [complete Example A column above]
+- Ambiguities and adjudication: [pending]
+
+## Genuine Pilot example B - pending researcher review
+
+- Independent Pilot source and source/call/segment identifiers: [pending]
+- Validation non-overlap check: [pending]
+- Original quote and exact offsets: [pending; no quotation invented]
+- Management identity, role, section, and prompt evidence: [pending]
+- Inclusion/exclusion decision and explanation: [pending]
+- Each field's value, evidence, and coding explanation: [complete Example B column above]
+- Ambiguities and adjudication: [pending]
+
+## Questions for Professor Yong
+
+- What anchors define confidence scores 1, 2, and 3?
+- How should unranked multiple causes, absent secondary causes, and more than two causes be represented?
+- How should inseparable multiple AI statement types or implementation stages be handled?
+- Does ai_role apply to pure AI statements with no workforce action, and how should enables differ from an augmentation claim in borderline cases?
+- How should management speakers outside CEO/CFO/clearly identified executive roles be represented without inventing a new allowed value?
+- How should approximate amounts, ranges, multiple magnitudes, currencies, and calendar/fiscal horizons be stored without false precision?
+- How should overlaps between workforce action labels be resolved when one action can be described in multiple ways?
+- For validation, how should excluded candidates and multiple statements split from one sampled passage affect the evaluation unit and weights?
+
+No unresolved answer is implemented as a coding rule. Review and approve this draft before formal coding.
