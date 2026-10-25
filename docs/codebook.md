@@ -1,31 +1,84 @@
-# AI Workforce Statements - Codebook
+# AI Workforce Statements — Codebook
 
+## 1. Objective
 
-## Inclusion and exclusion
+Identify and classify management statements about AI adoption and workforce changes in S&P 500 earnings calls (2018–2025).
 
-- **Workforce:** management statements about reductions, layoffs, freezes, slower hiring, no-backfill, offshoring, restructuring affecting headcount, or workforce growth.
-- **AI:** management statements about the firm's own AI investment, adoption, deployment, productivity effects, operational applications, or specific future plans.
-- **Both:** substantive AI and workforce content in the statement. Both does not itself imply a causal relationship.
-- Exclude generic employee praise, cost savings without workforce implications, vague AI enthusiasm, and AI products sold to customers without internal operational relevance. A qualifying internal product application may use the product type.
-- Analyst speech is context, not the included management statement. Establish management status from evidence; neither a keyword match nor an executive-like name is sufficient.
-- Do not infer layoffs from efficiency, productivity, automation, time saved, or adjacent AI mentions. Code AI-attributed workforce change only when management explicitly attributes it to AI/automation. Apply the same explicit-evidence standard to other causes.
+Code only what is explicitly stated. Do not infer managerial intentions, causal relationships, or outcomes without supporting evidence.
 
-## Coding procedure and uncertainty
+## 2. Unit of Coding
 
-1. Verify the source, call, speaker, management status, and sufficient surrounding context.
-2. Decide inclusion before statement_class. Record exclusions and unresolved cases in the human review log; do not add an unauthorized class such as excluded to the allowed values.
-3. Delimit the verbatim statement and separate genuinely distinct actions/claims. Retain negation, scope, timing, and attribution.
-4. Populate only supported fields. Preserve blank values for unknown, not applicable, or unresolved entries and explain which situation applies in the review log. Blank is not numeric zero or a label such as none_stated.
-5. Pure ai statements leave workforce-specific action, cause_primary, and cause_secondary blank. Workforce magnitude/horizon fields are inapplicable when there is no workforce action. Use the AI amount/horizon fields for AI-only claims. AI-specific fields are not forced onto workforce-only statements.
-6. Use separate Pilot material to develop examples. Keep the reserved validation CSV unchanged and do not use its quotes or eventual labels for codebook or prompt tuning.
+- One row represents one distinct management statement, not an entire call or keyword-matched passage.
+- A candidate may contain zero, one, or multiple valid statements. Split distinct actions or claims into separate rows.
+- Assign each included statement a unique integer `statement_id`. Preserve the original candidate ID and source metadata.
+- Exclude analyst/operator speech from management statements, but retain analyst questions as context when relevant.
 
-## Provenance retained alongside coding
+## 3. Inclusion and Classification
 
-Keep source_file, source file version/size, source_row, row_group/row_in_group, segment_index, quote character offsets, original speaker metadata, fiscal year, and the parent candidate/sample identifier. These audit links accompany the coding fields; they are not inferred labels. Character offsets are zero-based and end-exclusive. Preserve original source metadata separately when a verified firm ID or role is later added.
+| `statement_class` | Include when management discusses |
+|---|---|
+| `workforce` | Layoffs, reductions, hiring freezes or slowdowns, no-backfill, offshoring, headcount-related restructuring, or workforce growth |
+| `ai` | The firm's own AI investment, deployment, adoption, productivity claims, operational use cases, or specific plans |
+| `both` | Substantive AI and workforce content within the same statement |
 
-## Field dictionary and two example slots per field
+**Exclude:** Generic AI enthusiasm, ordinary automation without evidence of AI, product-only AI announcements without internal operational relevance, and efficiency or revenue growth without workforce implications.
 
-The two rightmost columns are deliberately empty review slots. For **every field**, each slot must eventually contain **coded value; evidence from a genuine Pilot quote/source; coding explanation**. Until researcher review, Pending means no value or explanation has been asserted. Populate Example A and Example B only from the independent Pilot material documented in the two full example templates below. Do not fabricate quotes or borrow validation cases.
+Keyword proximity is not sufficient for inclusion or causal attribution.
+
+## 4. Causality and Workforce Effects
+
+- Assign `cause_primary = ai_automation` only when management explicitly attributes a workforce action to AI.
+- AI adoption, task automation, and productivity gains do **not** automatically imply layoffs.
+- Distinguish substitution, workforce enablement, and employee augmentation. Reskilling or redeployment is not equivalent to headcount reduction.
+- Apply the same explicit-evidence rule to demand, cost, restructuring, overhiring, macroeconomic conditions, and mergers.
+- When multiple causes are stated, assign the most directly linked cause as primary and a separately stated reason as secondary. For equally direct causes, use source order consistently and flag the ambiguity.
+- Use `none_stated` only when adequate context confirms that no reason was given.
+
+## 5. AI Specificity and Implementation
+
+**`ai_specificity` rubric:**
+
+| Score | Rule |
+|---|---|
+| `1` | Substantive but general AI claim; no specific function or use case |
+| `2` | Identifies a specific business function or AI use case |
+| `3` | Identifies a function/use case **and** a directly related quantitative detail |
+
+**`ai_stage`:** `planned` = intended; `pilot` = limited trial; `deployed` = operational use; `scaled` = explicitly expanded or broad implementation.
+
+Do not infer adoption stage from promotional language or the word *automation* alone.
+
+## 6. Confidence Rubric
+
+`confidence` measures the reliability of the **coding decision**, not whether management's claim is true.
+
+| Score | Evidence standard |
+|---|---|
+| `3 — High` | Explicit wording and sufficient context directly support the classification and attribution; no meaningful alternative interpretation |
+| `2 — Medium` | Evidence supports the classification, but scope, wording, timing, or causal priority remains somewhat ambiguous |
+| `1 — Low` | Evidence is incomplete, truncated, or conflicting; requires manual review |
+
+Low confidence never justifies guessing. Leave unsupported fields null and document uncertainty.
+
+## 7. Evidence and Missing Values
+
+- Preserve exact quotations, speaker, call date, ticker, and source identifiers.
+- Verify speaker roles, prepared remarks versus Q&A, and analyst prompting using surrounding context.
+- Record quantities, units, and horizons only when explicitly supported.
+- Use `null` for missing, inapplicable, or unresolved values. Do not invent information to complete a record.
+- Distinguish `null` from meaningful labels such as `none_stated`, `not_mentioned`, and `no_claim`.
+- Resolve `firm_id` through the historical crosswalk; do not infer permanent company identity from ticker alone.
+
+## 8. Examples and Validation
+
+Each field below contains two examples with **Value, Evidence, and Explanation**. Examples illustrate how coding rules apply; they are not substitutes for source verification.
+
+Keep Codebook development examples separate from the reserved 300-candidate human validation sample (100 AI/workforce proximity, 100 workforce-only, 100 AI-only).
+
+Human labels serve as the reference standard. Evaluate automated extraction using statement-detection precision/recall and classification agreement, particularly for `cause_primary`. Do not tune prompts using validation answers.
+
+## Field Dictionary and Coding Examples
+
 
 | Field | Definition | Allowed values | Decision rules | Example A: value / evidence / explanation | Example B: value / evidence / explanation |
 |---|---|---|---|---|---|
@@ -47,7 +100,7 @@ The two rightmost columns are deliberately empty review slots. For **every field
 | magnitude_number | Explicit size of the workforce action. | Numeric value; blank if absent, ambiguous, or not applicable. | Capture only a number tied to this action, with unit and scope. Do not treat an unrelated company-wide number as the action's magnitude, convert approximate language to a precise number, or silently choose from a range. Pure ai workforce magnitude: blank. | **Value:** 118000<br>**Evidence:** “increasing our workforce by approximately 118,000 people”<br>**Explanation:** Explicit workforce growth magnitude; preserve approximate wording. | **Value:** blank<br>**Evidence:** “headcount reductions that would be focused on areas”<br>**Explanation:** A workforce reduction is described, but no number of employees is provided. |
 | magnitude_unit | Unit of the workforce-action magnitude. | headcount / percent / dollars; blank when magnitude is blank. | Use only the quoted unit. Preserve currency, scale, denominator, and bounds in quote/review notes; never infer a percent denominator or convert currency. | **Value:** headcount<br>**Evidence:** “increasing our workforce by approximately 118,000 people”<br>**Explanation:** The quantity explicitly refers to people. | **Value:** blank<br>**Evidence:** “headcount reductions that would be focused on areas”<br>**Explanation:** The reduction lacks an explicit numeric magnitude. |
 | functions_named | Functions named in connection with the statement/action. | Source function names as text; blank if none. | Retain named functions without imposing an industry/job taxonomy. Do not infer functions from company business or speaker title. | **Value:** manufacturing / factories<br>**Evidence:** “named our factories in Shanghai, China and Penang, Malaysia”<br>**Explanation:** The statement identifies factory operations; do not infer a specific job occupation. | **Value:** blank<br>**Evidence:** “headcount reductions that would be focused on areas”<br>**Explanation:** No identifiable business function is named. |
-| horizon_months | Stated number of months to completion or duration of the workforce action. | Nonnegative number (months); null if no precise duration or endpoint is supported. | Use an explicit duration for the workforce action or a clearly linked start/end date. Convert explicitly stated years into months (×12); preserve the original timing text. Do not turn vague language, reporting quarters, or a call date alone into a duration. | **Value:** null<br>**Evidence:** “We slowed down also the hiring within the company in several areas.”<br>**Explanation:** The company states that hiring slowed but provides no duration or completion date. | **Value:** null<br>**Evidence:** “headcount reductions that would be focused on areas”<br>**Explanation:** The reduction has no stated timetable in this excerpt; do not assign an arbitrary number of months. |
+| horizon_months | Stated number of months to completion or duration of the workforce action. | Nonnegative number (months); null if no precise duration or endpoint is supported | Use an explicit duration for the workforce action or a clearly linked start/end date. Convert explicitly stated years into months (×12); preserve the original timing text. Do not turn vague language, reporting quarters, or a call date alone into a duration. | **Value:** null<br>**Evidence:** “We slowed down also the hiring within the company in several areas.”<br>**Explanation:** The company states that hiring slowed but provides no duration or completion date. | **Value:** null<br>**Evidence:** No verified workforce-action completion horizon in the current Pilot excerpts.<br>**Explanation:** A numeric horizon requires an explicit timeframe tied to the workforce action, not merely a savings target or an analyst's question. |
 | quote | Verbatim evidence supporting this record. | Exact contiguous source text. | Preserve wording and enough context to interpret attribution, scope, timing, and negation. Retain character offsets; do not join noncontiguous text as one verbatim quote or replace it with a paraphrase. | **Value:** exact excerpt<br>**Evidence:** “We slowed down also the hiring within the company in several areas.”<br>**Explanation:** Verbatim contiguous text; retain offsets and surrounding context. | **Value:** exact excerpt<br>**Evidence:** “increasing our workforce by approximately 118,000 people”<br>**Explanation:** Verbatim evidence for the workforce-growth statement. |
 | confidence | Human coder’s confidence that the selected label and, where relevant, causal attribution are supported by the source—not confidence that management’s claim is true. | 1 = low; 2 = medium; 3 = high; null only when no includable statement is coded. | **3 (high):** verbatim evidence and sufficient context directly establish statement inclusion/action/cause, with no meaningful competing interpretation. **2 (medium):** relevant evidence is present, but cause priority, scope, or wording admits a plausible alternative; document the uncertainty. **1 (low):** incomplete, truncated, or conflicting context prevents a stable classification; flag for manual review and leave unsupported causal fields null. A high score never licenses implied AI causation. For none_stated, require enough context to rule out an explicit stated cause. | **Value:** 3<br>**Evidence:** “headcount reductions that would be focused on areas where we've rightsized it to the demand”<br>**Explanation:** The reduction and its demand rationale are expressly connected; the evidence strongly supports cause_primary=demand. | **Value:** 2<br>**Evidence:** “We slowed down also the hiring within the company in several areas. And we're very pleased with our ability to decelerate some of the expense growth taking into account the overall macro situation.”<br>**Explanation:** The hiring slowdown is clear, but spending restraint and macro conditions both appear. The primary-versus-secondary cause assignment requires a documented interpretation. |
 | ai_statement_type | Type of substantive AI statement. | investment / deployment / productivity_claim / product / plan / workforce_link. | Use the stated AI investment, deployment, productivity claim, operationally relevant product, specific plan, or explicit workforce link. A customer-facing product alone is excluded. For inseparable multiple types, flag the unresolved precedence rather than invent one. | **Value:** investment<br>**Evidence:** “our significant investment and yearly (ph) leadership”<br>**Explanation:** Statement presents Accenture’s investment in GenAI; confirm adjacent explicit GenAI wording in the same excerpt. | **Value:** deployment<br>**Evidence:** “its breakthroughs in scaling AI, 3D printing, robotics, big-data analytics”<br>**Explanation:** AI is described as scaled in the firm’s factory operations, not just a sales pitch. |
@@ -55,7 +108,7 @@ The two rightmost columns are deliberately empty review slots. For **every field
 | ai_function | Function/use case named for the firm's own AI activity. | Source function/use-case text; blank if unstated. | Copy the described function. Do not infer internal adoption from products sold to customers. | **Value:** manufacturing operations<br>**Evidence:** “named our factories in Shanghai, China and Penang, Malaysia”<br>**Explanation:** The firm links AI scaling to its own factory activities. | **Value:** blank<br>**Evidence:** “the most transformative technology of the next decade, GenAI”<br>**Explanation:** GenAI is identified but no specific internal operating function is named. |
 | ai_amount | Explicit numerical magnitude tied to the firm’s own AI-related investment, adoption, capability, or AI-specific staffing commitment. | Numeric value; null if no attributable amount is stated. | Require a direct AI linkage and record the meaning of the quantity (investment, AI staff, etc.) in the coding note. Keep units separate; never turn jobs automated into layoffs or combine spending with revenue. Preserve approximate or target wording. | **Value:** 3000000000<br>**Evidence:** “a $3 billion investment in AI”<br>**Explanation:** The call identifies a company AI investment of three billion dollars; amount is stored as 3000000000, with monetary unit recorded separately. | **Value:** 80000<br>**Evidence:** “doubling our data and AI workforce from 40,000- 80,000 strong”<br>**Explanation:** The stated 80,000 is a targeted size of the dedicated data/AI workforce. It is not 80,000 layoffs and must not be treated as realized headcount. |
 | ai_unit | Unit for the AI-linked magnitude stored in ai_amount. | dollars / percent / headcount / hours; null if ai_amount is null. | Use the unit explicitly attached to the AI-linked amount. Preserve currency and whether a workforce figure is a target versus observed; do not interpret automated tasks as employee layoffs. | **Value:** dollars<br>**Evidence:** “a $3 billion investment in AI”<br>**Explanation:** The quantity is a dollar-denominated AI investment; ai_amount=3000000000. | **Value:** headcount<br>**Evidence:** “doubling our data and AI workforce from 40,000- 80,000 strong”<br>**Explanation:** The 80,000 target counts people assigned to data/AI work, not dollars or jobs eliminated. |
-| ai_build_or_buy | Stated approach to obtaining the AI capability. | build / buy / partner / not_stated. | Use explicit internal development, purchase, or partnership evidence. not_stated is for absence of a stated approach in adequate context. Mixed approaches require review or distinct records; do not infer from vendor names alone. | **Value:** not_stated<br>**Evidence:** “its breakthroughs in scaling AI”<br>**Explanation:** Scaling is described but whether AI was built, bought, or partnered is not specified. | **Value:** not_stated<br>**Evidence:** “our significant investment and yearly (ph) leadership”<br>**Explanation:** Investment alone does not establish build-versus-buy. |
+| ai_build_or_buy | Stated approach to obtaining the AI capability. | build / buy / partner / not_stated. | Use explicit internal development, purchase, or partnership evidence. not_stated is for absence of a stated approach in adequate context. Mixed approaches require review or distinct records; do not infer from vendor names alone. | **Value:** not_stated<br>**Evidence:** “its breakthroughs in scaling AI”<br>**Explanation:** Scaling is described but whether AI was built, bought, or partnered is not specified. |**Value:** buy<br>**Evidence:** “we also announced the acquisition of California-based Sigsense, a start-up that uses artificial intelligence and power monitoring”<br>**Explanation:** Agilent acquired an external company with AI technology rather than developing the technology entirely in-house.|
 | ai_stage | Implementation maturity of the company’s stated AI activity. | planned / pilot / deployed / scaled; null when stage cannot be established. | planned: only intended future activity. pilot: explicitly limited trial/prototype. deployed: use already occurring in live operations. scaled: explicit broad rollout, scaling, or production-wide adoption. Distinguish legacy AI from GenAI, and product/customer automation from the company’s own operations. No AI stage may be inferred from the word automation alone. | **Value:** scaled<br>**Evidence:** “its breakthroughs in scaling AI, 3D printing, robotics, big-data analytics”<br>**Explanation:** The speaker attributes the factory recognition to scaling AI across internal manufacturing facilities; this is stronger than an unimplemented plan. | **Value:** deployed<br>**Evidence:** “we have automated 13,000 jobs”<br>**Explanation:** Management reports AI-enabled automation already achieved in operations, so the relevant automation is deployed. The verified timing is year-to-date, and those people were reskilled and redeployed—not reported as 13,000 layoffs. |
 | ai_horizon_months | Explicit time horizon for an AI investment, rollout, or deployment plan. | Nonnegative number (months); null if no supported horizon. | Use only a time duration explicitly attached to the AI activity; convert stated years to months (×12). Do not infer project duration from call year, product launch, or the phrase scaled. | **Value:** 36<br>**Evidence:** “investing $3 billion over the next three years”<br>**Explanation:** The AI investment is scheduled over three years, giving a 36-month horizon. | **Value:** null<br>**Evidence:** “its breakthroughs in scaling AI, 3D printing, robotics, big-data analytics”<br>**Explanation:** The statement describes scaling at company factories but specifies no duration or deadline for AI implementation. |
-| ai_workforce_claim | Explicit AI-related workforce claim. | reduces / augments / no_claim. | Use reduces for an explicit AI-linked workforce reduction, augments for explicit worker augmentation, and no_claim when no workforce claim is made in sufficient context. Productivity/time savings alone do not establish headcount reduction. | **Value:** no_claim<br>**Evidence:** “its breakthroughs in scaling AI”<br>**Explanation:** The AI passage does not state a workforce consequence. | **Value:** no_claim<br>**Evidence:** “our significant investment and yearly (ph) leadership”<br>**Explanation:** An AI investment statement alone does not claim headcount reductions or augmentation. |
+| ai_workforce_claim | Explicit AI-related workforce claim. | reduces / augments / no_claim. | Use reduces for explicit AI-attributed workforce reductions. Use augments for explicitly stated AI-related worker support, reskilling, or redeployment, including workforce adaptation following AI-enabled automation. Use no_claim when sufficient context establishes no AI-related workforce claim. Task automation alone does not imply layoffs. | **Value:** no_claim<br>**Evidence:** “its breakthroughs in scaling AI”<br>**Explanation:** The AI passage does not state a workforce consequence. |**Value:** augments<br>**Evidence:** “we have automated 13,000 jobs and then we've reskilled those people and redeployed them.” (Accenture Q3 FY2023 official transcript, same call as Pilot #71)<br>**Explanation:** Management explicitly describes reskilling and redeploying employees following AI-enabled automation. Under this rubric, this constitutes AI-related workforce adaptation rather than a claim of headcount reduction. The 13,000 refers to jobs automated year-to-date, not employees laid off. |
