@@ -16,3 +16,33 @@ __pycache__/
 
 # Large research data
 *.parquet
+
+# Licensed extracts and derived datasets: keep local at any depth
+data/
+raw/
+clean/
+panel/
+output/
+outputs/
+*.csv
+*.tsv
+*.gz
+*.gzip
+*.zip
+*.feather
+*.arrow
+*.dta
+*.sas7bdat
+*.rds
+*.RData
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.sqlite
+*.db
+*.xlsx
+*.xls
+
+# Notebook autosaves can contain licensed outputs
+.ipynb_checkpoints/
